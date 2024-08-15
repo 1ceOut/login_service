@@ -161,7 +161,7 @@ public class LoginService {
             user = new UserEntity();
             user.setUserId("google " + userDto.getId());
             user.setName(userDto.getFamily_name()+userDto.getGiven_name());
-            user.setEmail(userDto.getVerified_email());
+            user.setEmail(userDto.getEmail());
             user.setPhoto(userDto.getPicture());
             user.setRole("ROLE_NEED_INSERT");
             user.setAccessToken(googleAccessDto.getAccess_token());
@@ -171,7 +171,7 @@ public class LoginService {
         else {
             user = userEntityRepository.findById("google "+userDto.getId()).get();
             user.setName(userDto.getFamily_name()+userDto.getGiven_name());
-            user.setEmail(userDto.getVerified_email());
+            user.setEmail(userDto.getEmail());
             user.setPhoto(userDto.getPicture());
             user.setAccessToken(googleAccessDto.getAccess_token());
             user.setRefreshToken(googleAccessDto.getRefresh_token());
