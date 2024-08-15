@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: login-service
+  cloud:
+    config:
+      uri: http://finalconfig:config123@config.icebuckwheat.kro.kr
+      name: login
+      profile: dev
