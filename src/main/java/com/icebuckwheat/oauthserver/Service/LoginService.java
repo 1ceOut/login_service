@@ -85,7 +85,7 @@ public class LoginService {
         userService.sendUserId(convert_User(user));
 
         return JwtResponse.builder()
-                .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
                 .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
                 .build();
     }
@@ -137,7 +137,7 @@ public class LoginService {
         userService.sendUserId(convert_User(user));
 
         return JwtResponse.builder()
-                .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
                 .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
                 .build();
     }
@@ -182,7 +182,7 @@ public class LoginService {
         userService.sendUserId(convert_User(user));
 
         return JwtResponse.builder()
-                .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
                 .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
                 .build();
     }

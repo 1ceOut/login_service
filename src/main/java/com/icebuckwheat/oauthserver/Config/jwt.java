@@ -27,13 +27,14 @@ public class jwt {
 
     private String prefix;
 
-    public String MakeAccessJwtToken(String id,String role,String name) {
+    public String MakeAccessJwtToken(String id,String role,String name,String photo) {
         Date now = new Date();
 
         return Jwts.builder()
                 .subject(id)
                 .claim("name",name)
                 .claim("role",role)
+                .claim("photo",photo)
                 .issuedAt(now)
                 .expiration(new Date(now.getTime()+expiration))
                 .signWith(getSecretKey(),Jwts.SIG.HS256)
