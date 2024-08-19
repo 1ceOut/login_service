@@ -106,6 +106,7 @@ public class LoginService {
                 accessToken,
                 state
         );
+        System.out.println(naverAccessDto.toString());
 
         JsonNode jsonNode = objectMapper.readTree(naverUserOpenFeign.getUser("Bearer " + naverAccessDto.getAccess_token())).get("response");
 
