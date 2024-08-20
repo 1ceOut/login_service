@@ -25,7 +25,7 @@ public class LoginController {
     }
 
     private static ResponseCookie generateRefreshTokenCookie(String refreshToken) {
-        return ResponseCookie.from("refreshtoken", refreshToken)
+        return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .secure(true)
                 .path("/")
@@ -40,13 +40,7 @@ public class LoginController {
 
         try {
             JwtResponse jwtResponse = loginService.KakaoLogin(accessToken, "kakao");
-            ResponseCookie cookie = ResponseCookie.from("refreshToken", jwtResponse.getRefreshToken())
-                    .maxAge(7 * 24 * 60 * 60)
-                    .path("/")
-                    .secure(true)
-                    .sameSite("None")
-                    .httpOnly(true)
-                    .build();
+            ResponseCookie cookie = generateRefreshTokenCookie(jwtResponse.getRefreshToken());
 
             // 응답 헤더에 쿠키 추가
             HttpHeaders headers = new HttpHeaders();
@@ -86,13 +80,7 @@ public class LoginController {
     public ResponseEntity<Object> GoogleLogin(@RequestParam("accesstoken") String accessToken) throws JsonProcessingException {
         try {
             JwtResponse jwtResponse = loginService.GoogleLogin(accessToken);
-            ResponseCookie cookie = ResponseCookie.from("refreshToken", jwtResponse.getRefreshToken())
-                    .maxAge(7 * 24 * 60 * 60)
-                    .path("/")
-                    .secure(true)
-                    .sameSite("None")
-                    .httpOnly(true)
-                    .build();
+            ResponseCookie cookie = generateRefreshTokenCookie(jwtResponse.getRefreshToken());
 
             // 응답 헤더에 쿠키 추가
             HttpHeaders headers = new HttpHeaders();
@@ -109,19 +97,13 @@ public class LoginController {
     }
 
     @GetMapping("/login/auto")
-    public ResponseEntity<Object> checkAutoLogin(@CookieValue(value = "refreshtoken",required = false)String refreshToken) throws JsonProcessingException {
+    public ResponseEntity<Object> checkAutoLogin(@CookieValue(value = "refreshToken",required = false)String refreshToken) throws JsonProcessingException {
         if (refreshToken==null || refreshToken.isEmpty() || refreshToken.isBlank()) return ResponseEntity.status(210).build();
         JwtResponse jwtResponse = loginService.checkRefreshToken(refreshToken);
         if (jwtResponse == null) {
             return ResponseEntity.status(500).body(null);
         }
-        ResponseCookie cookie = ResponseCookie.from("refreshtoken", jwtResponse.getRefreshToken())
-                .maxAge(7 * 24 * 60 * 60)
-                .path("/")
-                .secure(true)
-                .sameSite("None")
-                .httpOnly(true)
-                .build();
+        ResponseCookie cookie = generateRefreshTokenCookie(jwtResponse.getRefreshToken());
 
         // 응답 헤더에 쿠키 추가
         HttpHeaders headers = new HttpHeaders();
