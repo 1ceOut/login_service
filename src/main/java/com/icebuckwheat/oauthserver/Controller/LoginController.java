@@ -107,4 +107,28 @@ public class LoginController {
             return ResponseEntity.status(500).body(null); // Example error handling
         }
     }
+
+    @GetMapping("/login/auto")
+    public ResponseEntity<Object> checkAutoLogin(@CookieValue(value = "refreshtoken",required = false)String refreshToken) throws JsonProcessingException {
+        if (refreshToken==null || refreshToken.isEmpty() || refreshToken.isBlank()) return ResponseEntity.status(210).build();
+        JwtResponse jwtResponse = loginService.checkRefreshToken(refreshToken);
+        if (jwtResponse == null) {
+            return ResponseEntity.status(500).body(null);
+        }
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", jwtResponse.getRefreshToken())
+                .maxAge(7 * 24 * 60 * 60)
+                .path("/")
+                .secure(true)
+                .sameSite("None")
+                .httpOnly(true)
+                .build();
+
+        // 응답 헤더에 쿠키 추가
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .body(jwtResponse);
+    }
 }

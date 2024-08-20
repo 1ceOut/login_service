@@ -106,7 +106,6 @@ public class LoginService {
                 accessToken,
                 state
         );
-        System.out.println(naverAccessDto.toString());
 
         JsonNode jsonNode = objectMapper.readTree(naverUserOpenFeign.getUser("Bearer " + naverAccessDto.getAccess_token())).get("response");
 
@@ -152,7 +151,6 @@ public class LoginService {
                 "authorization_code"
         );
 
-        System.out.println(googleAccessDto.toString());
 
         GoogleUserDto userDto = googleUserOpenFeign.getUser(googleAccessDto.getAccess_token());
 
@@ -193,5 +191,17 @@ public class LoginService {
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
                 .build();
+    }
+
+    public JwtResponse checkRefreshToken(String refreshToken) throws JsonProcessingException {
+
+        if (jwt.isJwtValid(refreshToken)){
+            UserEntity user = userEntityRepository.findById(jwt.getUserId(refreshToken)).get();
+            userService.sendUserId(convert_User(user));
+            return JwtResponse.builder()
+                    .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
+                    .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                    .build();
+        } else return null;
     }
 }
