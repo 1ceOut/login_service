@@ -115,7 +115,7 @@ public class LoginController {
         if (jwtResponse == null) {
             return ResponseEntity.status(500).body(null);
         }
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", jwtResponse.getRefreshToken())
+        ResponseCookie cookie = ResponseCookie.from("refreshtoken", jwtResponse.getRefreshToken())
                 .maxAge(7 * 24 * 60 * 60)
                 .path("/")
                 .secure(true)
