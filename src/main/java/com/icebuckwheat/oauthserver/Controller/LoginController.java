@@ -129,6 +129,6 @@ public class LoginController {
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok().headers(headers).build();
+        return ResponseEntity.ok().headers(headers).body("");
     }
 }
