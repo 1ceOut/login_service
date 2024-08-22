@@ -128,7 +128,6 @@ public class LoginController {
 
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
-        headers.add("Access-Control-Allow-Origin","https://reacticeout.icebuckwheat.kro.kr");
 
         return ResponseEntity.ok().headers(headers).body("");
     }
