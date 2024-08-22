@@ -9,10 +9,11 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
-        registry.addMapping("/api/**")
-                .allowedOrigins("http://localhost:8080","https://reacticeout.icebuckwheat.kro.kr")
-                .allowedMethods("*")
-                .allowCredentials(true) // 이 부분이 중요합니다.
-                .allowedHeaders("*");
+        registry.addMapping("/**")  // 모든 경로에 대해 CORS 설정 적용
+                .allowedOrigins("http://localhost:8080", "https://reacticeout.icebuckwheat.kro.kr")
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
+                .allowedHeaders("*")
+                .allowCredentials(true)
+                .maxAge(3600);  // preflight 요청 결과를 1시간 동안 캐시
     }
 }
