@@ -113,4 +113,22 @@ public class LoginController {
                 .headers(headers)
                 .body(jwtResponse);
     }
+
+    @DeleteMapping("/logout")
+    public ResponseEntity<Object> logout(@CookieValue(value = "refreshToken",required = false)String refreshToken) throws JsonProcessingException {
+        if (refreshToken==null || refreshToken.isEmpty()) return ResponseEntity.status(210).build();
+
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", null)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .sameSite(Cookie.SameSite.NONE.attributeValue())
+                .maxAge(0)
+                .build();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return ResponseEntity.ok().headers(headers).build();
+    }
 }
