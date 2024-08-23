@@ -12,7 +12,7 @@ import feign.FeignException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -54,6 +54,7 @@ public class LoginService {
     private final ObjectMapper objectMapper;
     private final UserService userService;
 
+    @Transactional
     public JwtResponse KakaoLogin(String code, String provider) throws FeignException, JsonProcessingException {
 
         UserEntity user = null;
@@ -98,6 +99,7 @@ public class LoginService {
                 code);
     }
 
+    @Transactional
     public JwtResponse NaverLogin(String accessToken, String state) throws JsonProcessingException {
         NaverAccessDto naverAccessDto = naverLoginAccessOpenFeign.getAccessToken(
                 "authorization_code",
@@ -141,7 +143,8 @@ public class LoginService {
                 .build();
     }
 
-    public JwtResponse GoogleLogin(@RequestParam("accesstoken") String accessToken) throws JsonProcessingException {
+    @Transactional
+    public JwtResponse GoogleLogin(String accessToken) throws JsonProcessingException {
 
         GoogleAccessDto googleAccessDto = googleLoginAccessOpenFeign.getAccessToken(
                 accessToken,
@@ -169,7 +172,7 @@ public class LoginService {
         }
         else {
             user = userEntityRepository.findById("google "+userDto.getId()).get();
-            user.setName(userDto.getFamily_name()+userDto.getGiven_name());
+            user.setName((userDto.getFamily_name()==null?"":userDto.getFamily_name())+userDto.getGiven_name());
             user.setEmail(userDto.getEmail());
             user.setPhoto(userDto.getPicture());
             user.setAccessToken(googleAccessDto.getAccess_token());
@@ -193,15 +196,82 @@ public class LoginService {
                 .build();
     }
 
+    @Transactional
     public JwtResponse checkRefreshToken(String refreshToken) throws JsonProcessingException {
 
         if (jwt.isJwtValid(refreshToken)){
             UserEntity user = userEntityRepository.findById(jwt.getUserId(refreshToken)).get();
-            userService.sendUserId(convert_User(user));
-            return JwtResponse.builder()
-                    .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
-                    .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
-                    .build();
+
+            if (user.getUserId().split(" ")[0].equals("google")){
+                GoogleAccessDto googleAccessDto = googleLoginAccessOpenFeign.getRefreshAccessToken(
+                        googleClientId,
+                        googleClientSecret,
+                        user.getRefreshToken(),
+                        "refresh_token"
+                );
+                GoogleUserDto userDto = googleUserOpenFeign.getUser(googleAccessDto.getAccess_token());
+                user.setName((userDto.getFamily_name()==null?"":userDto.getFamily_name())+userDto.getGiven_name());
+                user.setEmail(userDto.getEmail());
+                user.setPhoto(userDto.getPicture());
+                user.setAccessToken(googleAccessDto.getAccess_token());
+                user.setRefreshToken(googleAccessDto.getRefresh_token());
+                userEntityRepository.save(user);
+
+                userService.sendUserId(convert_User(user));
+
+                return JwtResponse.builder()
+                        .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
+                        .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                        .build();
+
+            } else if (user.getUserId().split(" ")[0].equals("naver")) {
+                NaverAccessDto naverAccessDto = naverLoginAccessOpenFeign.getRefreshAccessToken(
+                        "refresh_token",
+                        naverClientId,
+                        naverClientSecret,
+                        user.getRefreshToken()
+                );
+
+                JsonNode jsonNode = objectMapper.readTree(naverUserOpenFeign.getUser("Bearer " + naverAccessDto.getAccess_token())).get("response");
+
+                user.setUserId(("naver "+jsonNode.get("id")).replace("\"",""));
+                user.setName(jsonNode.get("name").asText());
+                user.setEmail(jsonNode.get("email").asText());
+                user.setPhoto(jsonNode.get("profile_image").asText());
+                user.setAccessToken(naverAccessDto.getAccess_token());
+                user.setRefreshToken(naverAccessDto.getRefresh_token());
+                userEntityRepository.save(user);
+
+                userService.sendUserId(convert_User(user));
+
+                return JwtResponse.builder()
+                        .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
+                        .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                        .build();
+            }
+            else {
+                KakaoAccessDto kakaoAccessDto = kakaoLoginAccessOpenFeign.getRefreshAccessToken(
+                        "refresh_token",
+                        kakaoClientId,
+                        user.getRefreshToken()
+                );
+
+                JsonNode jsonNode = objectMapper.readTree(kakaoUesrOpenFeign.getUser("Bearer " + kakaoAccessDto.getAccess_token(),"application/x-www-form-urlencoded;charset=utf-8"));
+
+                user.setName(jsonNode.get("kakao_account").get("profile").get("nickname").asText());
+                user.setEmail(jsonNode.get("kakao_account").get("email").asText());
+                user.setPhoto(jsonNode.get("kakao_account").get("profile").get("profile_image_url").asText());
+                user.setAccessToken(kakaoAccessDto.getAccess_token());
+                user.setRefreshToken(kakaoAccessDto.getRefresh_token());
+                userEntityRepository.save(user);
+
+                userService.sendUserId(convert_User(user));
+
+                return JwtResponse.builder()
+                        .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
+                        .RefreshToken(jwt.MakeRefreshJwtToken(user.getUserId(),user.getRole(),user.getName()))
+                        .build();
+            }
         } else return null;
     }
 }

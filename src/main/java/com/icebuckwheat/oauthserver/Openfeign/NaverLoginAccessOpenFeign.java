@@ -16,4 +16,12 @@ public interface NaverLoginAccessOpenFeign {
             @RequestParam(name = "code") String code,
             @RequestParam(name = "state") String state
     );
+
+    @GetMapping("/token")
+    NaverAccessDto getRefreshAccessToken(
+            @RequestParam(name = "grant_type") String grantType,
+            @RequestParam(name = "client_id") String clientId,
+            @RequestParam(name = "client_secret") String clientSecret,
+            @RequestParam(name = "refresh_token") String refreshToken
+    );
 }

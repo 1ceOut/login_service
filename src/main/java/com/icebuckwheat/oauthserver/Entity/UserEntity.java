@@ -22,7 +22,7 @@ public class UserEntity {
     @Column(name = "name")
     private String name;
 
-    @Column(name = "photo", length = 100)
+    @Column(name = "photo", length = 500)
     private String photo;
 
     @Column(name = "nonpreference", length = 200)

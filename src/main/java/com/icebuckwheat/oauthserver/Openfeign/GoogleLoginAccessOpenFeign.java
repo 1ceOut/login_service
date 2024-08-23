@@ -17,4 +17,11 @@ public interface GoogleLoginAccessOpenFeign {
             @RequestParam("grant_type") String grantType
     );
 
+    @PostMapping("/token")
+    GoogleAccessDto getRefreshAccessToken(
+            @RequestParam("client_id") String clientId,
+            @RequestParam("client_secret") String clientSecret,
+            @RequestParam("refresh_token") String refreshToken,
+            @RequestParam("grant_type") String grantType
+    );
 }
