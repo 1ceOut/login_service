@@ -13,7 +13,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("http://localhost:8080", "https://reacticeout.icebuckwheat.kro.kr")
                 .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
                 .allowedHeaders("*")
-                .allowCredentials(true)
-                .maxAge(3600);  // preflight 요청 결과를 1시간 동안 캐시
+                .allowCredentials(true);
     }
 }
