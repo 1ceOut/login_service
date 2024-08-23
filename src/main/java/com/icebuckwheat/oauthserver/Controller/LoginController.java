@@ -114,7 +114,7 @@ public class LoginController {
                 .body(jwtResponse);
     }
 
-    @GetMapping("/login/logout")
+    @DeleteMapping("/login/logout")
     public ResponseEntity<Object> logout(@CookieValue(value = "refreshToken",required = false)String refreshToken) throws JsonProcessingException {
         if (refreshToken==null || refreshToken.isEmpty()) return ResponseEntity.status(210).build();
 
