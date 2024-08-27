@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.icebuckwheat.oauthserver.Config.jwt;
 import com.icebuckwheat.oauthserver.Dto.JwtResponse;
 import com.icebuckwheat.oauthserver.Service.LoginService;
+import com.icebuckwheat.oauthserver.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.HttpHeaders;
@@ -18,10 +19,12 @@ public class LoginController {
 
     private final LoginService loginService;
     private final com.icebuckwheat.oauthserver.Config.jwt jwt;
+    private final UserService userService;
 
-    public LoginController(LoginService loginService, jwt jwt) {
+    public LoginController(LoginService loginService, jwt jwt, UserService userService) {
         this.loginService = loginService;
         this.jwt = jwt;
+        this.userService = userService;
     }
 
     private static ResponseCookie generateRefreshTokenCookie(String refreshToken) {
@@ -130,5 +133,11 @@ public class LoginController {
         headers.add(HttpHeaders.SET_COOKIE, cookie.toString());
 
         return ResponseEntity.ok().headers(headers).body("");
+    }
+
+    @GetMapping("/login/getuser")
+    public ResponseEntity<Object> getUserData(@RequestPart(required = false)String userId) {
+        if (userId==null || userId.isEmpty()) return ResponseEntity.status(210).build();
+        return ResponseEntity.ok(userService.getUser(userId));
     }
 }
