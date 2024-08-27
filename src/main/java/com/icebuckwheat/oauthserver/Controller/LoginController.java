@@ -136,8 +136,8 @@ public class LoginController {
     }
 
     @GetMapping("/login/getuser")
-    public ResponseEntity<Object> getUserData(@RequestPart(required = false)String userId) {
-        if (userId==null || userId.isEmpty()) return ResponseEntity.status(210).build();
-        return ResponseEntity.ok(userService.getUser(userId));
+    public ResponseEntity<Object> getUserData(String user_id) {
+        if (user_id==null || user_id.isEmpty()) return ResponseEntity.status(210).build();
+        return ResponseEntity.ok(userService.getUser(user_id));
     }
 }
