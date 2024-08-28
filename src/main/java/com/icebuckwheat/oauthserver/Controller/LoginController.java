@@ -2,10 +2,19 @@ package com.icebuckwheat.oauthserver.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.icebuckwheat.oauthserver.Config.jwt;
+import com.icebuckwheat.oauthserver.Dto.GetUserDataResponseDto;
 import com.icebuckwheat.oauthserver.Dto.JwtResponse;
 import com.icebuckwheat.oauthserver.Dto.UserEntityDto;
 import com.icebuckwheat.oauthserver.Service.LoginService;
 import com.icebuckwheat.oauthserver.Service.UserService;
+import io.swagger.v3.oas.annotations.Hidden;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.web.server.Cookie;
 import org.springframework.http.HttpHeaders;
@@ -40,7 +49,7 @@ public class LoginController {
                 .build();
     }
 
-
+    @Hidden
     @GetMapping("/login/kakao")
     public ResponseEntity<Object> login(@RequestParam("accesstoken") String accessToken) throws JsonProcessingException {
 
@@ -62,6 +71,7 @@ public class LoginController {
         }
     }
 
+    @Hidden
     @GetMapping("/login/naver")
     public ResponseEntity<Object> Naverlogin(@RequestParam("accesstoken") String accessToken, @RequestParam("state") String state) throws JsonProcessingException {
         try {
@@ -82,6 +92,7 @@ public class LoginController {
         }
     }
 
+    @Hidden
     @GetMapping("/login/google")
     public ResponseEntity<Object> GoogleLogin(@RequestParam("accesstoken") String accessToken) throws JsonProcessingException {
         try {
@@ -102,6 +113,7 @@ public class LoginController {
         }
     }
 
+    @Hidden
     @GetMapping("/login/auto")
     public ResponseEntity<Object> checkAutoLogin(@CookieValue(value = "refreshToken",required = false)String refreshToken) throws JsonProcessingException {
         if (refreshToken==null || refreshToken.isEmpty() || refreshToken.isBlank()) return ResponseEntity.status(210).build();
@@ -120,6 +132,7 @@ public class LoginController {
                 .body(jwtResponse);
     }
 
+    @Hidden
     @DeleteMapping("/login/logout")
     public ResponseEntity<Object> logout(@CookieValue(value = "refreshToken",required = false)String refreshToken) throws JsonProcessingException {
         if (refreshToken==null || refreshToken.isEmpty()) return ResponseEntity.status(210).build();
@@ -138,16 +151,30 @@ public class LoginController {
         return ResponseEntity.ok().headers(headers).body("");
     }
 
+    @Tag(name = "로그인 사용자 API", description = "로그인한 사용자에 대한 간단한 정보를 가져오는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",description = "성공",content = @Content(
+                    schema = @Schema(implementation = GetUserDataResponseDto.class)
+            )),
+            @ApiResponse(responseCode = "401", description = "제공해주신 user_id와 일치하는 값이 없거나 잘못된 user_id입니다.")
+    })
     @GetMapping("/login/getuser")
-    public ResponseEntity<Object> getUserData(String user_id) {
-        if (user_id==null || user_id.isEmpty()) return ResponseEntity.status(210).build();
+    public ResponseEntity<Object> getUserData(@Parameter(name = "user_id",description = "사용자의 고유 ID값") String user_id) {
+        if (user_id==null || user_id.isEmpty()) return ResponseEntity.status(401).build();
         return ResponseEntity.ok(userService.getUser(user_id));
     }
 
+    @Tag(name = "로그인 사용자들 API", description = "모든 사용자에 대한 모든 정보를 가져오는 API입니다.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200",description = "성공",content = @Content(
+                    array = @ArraySchema(schema = @Schema(implementation = UserEntityDto.class))
+            )),
+            @ApiResponse(responseCode = "401", description = "현재 유저가 없습니다.")
+    })
     @GetMapping("/login/getalluser")
     public ResponseEntity<Object> getAllUserData() {
         List<UserEntityDto> userEntityDtos = userService.getAllUsers();
-        if (userEntityDtos==null || userEntityDtos.isEmpty()) return ResponseEntity.status(210).build();
+        if (userEntityDtos==null || userEntityDtos.isEmpty()) return ResponseEntity.status(401).build();
         return ResponseEntity.ok(userEntityDtos);
     }
 }
