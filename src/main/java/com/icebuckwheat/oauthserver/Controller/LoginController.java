@@ -3,6 +3,7 @@ package com.icebuckwheat.oauthserver.Controller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.icebuckwheat.oauthserver.Config.jwt;
 import com.icebuckwheat.oauthserver.Dto.JwtResponse;
+import com.icebuckwheat.oauthserver.Dto.UserEntityDto;
 import com.icebuckwheat.oauthserver.Service.LoginService;
 import com.icebuckwheat.oauthserver.Service.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -11,6 +12,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @RestController
@@ -139,5 +142,12 @@ public class LoginController {
     public ResponseEntity<Object> getUserData(String user_id) {
         if (user_id==null || user_id.isEmpty()) return ResponseEntity.status(210).build();
         return ResponseEntity.ok(userService.getUser(user_id));
+    }
+
+    @GetMapping("/login/getalluser")
+    public ResponseEntity<Object> getAllUserData() {
+        List<UserEntityDto> userEntityDtos = userService.getAllUsers();
+        if (userEntityDtos==null || userEntityDtos.isEmpty()) return ResponseEntity.status(210).build();
+        return ResponseEntity.ok(userEntityDtos);
     }
 }

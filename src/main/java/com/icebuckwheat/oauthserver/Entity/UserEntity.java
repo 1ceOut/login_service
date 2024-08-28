@@ -1,5 +1,6 @@
 package com.icebuckwheat.oauthserver.Entity;
 
+import com.icebuckwheat.oauthserver.Dto.UserEntityDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -52,4 +53,20 @@ public class UserEntity {
     @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 
+
+    public UserEntityDto toDto() {
+        return UserEntityDto.builder()
+                .userId(userId)
+                .email(email)
+                .name(name)
+                .photo(photo)
+                .nonpreference(nonpreference)
+                .preference(preference)
+                .allergy(allergy)
+                .illness(illness)
+                .height(height)
+                .weight(weight)
+                .role(role)
+                .build();
+    }
 }

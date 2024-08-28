@@ -2,11 +2,15 @@ package com.icebuckwheat.oauthserver.Service;
 
 import com.icebuckwheat.oauthserver.Dto.GetUserDataResponseDto;
 import com.icebuckwheat.oauthserver.Dto.User;
+import com.icebuckwheat.oauthserver.Dto.UserEntityDto;
 import com.icebuckwheat.oauthserver.Entity.UserEntity;
 import com.icebuckwheat.oauthserver.Repository.UserEntityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
@@ -30,5 +34,9 @@ public class UserService {
                 .name(user.getName())
                 .photo(user.getPhoto())
                 .build();
+    }
+
+    public List<UserEntityDto> getAllUsers() {
+        return userEntityRepository.findAll().stream().map(UserEntity::toDto).collect(Collectors.toList());
     }
 }
