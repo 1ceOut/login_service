@@ -18,4 +18,6 @@ public class User {
     private String name;
     @Schema(description = "사용자의 이메일")
     private String email;
+    @Schema(description = "사용자의 프로필 사진")
+    private String photo;
 }

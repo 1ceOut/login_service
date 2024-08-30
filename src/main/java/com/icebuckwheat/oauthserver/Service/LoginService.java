@@ -193,6 +193,7 @@ public class LoginService {
                 .user_id(userEntity.getUserId())
                 .email(userEntity.getEmail())
                 .name(userEntity.getName())
+                .photo(userEntity.getPhoto())
                 .build();
     }
 
