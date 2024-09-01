@@ -39,10 +39,10 @@ public class UserEntity {
     private String illness;
 
     @Column(name = "height")
-    private Byte height;
+    private int height;
 
     @Column(name = "weight")
-    private Byte weight;
+    private int weight;
 
     @Column(name = "role")
     private String role;

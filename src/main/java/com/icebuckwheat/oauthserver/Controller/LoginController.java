@@ -2,6 +2,7 @@ package com.icebuckwheat.oauthserver.Controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.icebuckwheat.oauthserver.Config.jwt;
+import com.icebuckwheat.oauthserver.Dto.AddinfoRequsetDto;
 import com.icebuckwheat.oauthserver.Dto.GetUserDataResponseDto;
 import com.icebuckwheat.oauthserver.Dto.JwtResponse;
 import com.icebuckwheat.oauthserver.Dto.UserEntityDto;
@@ -176,5 +177,14 @@ public class LoginController {
         List<UserEntityDto> userEntityDtos = userService.getAllUsers();
         if (userEntityDtos==null || userEntityDtos.isEmpty()) return ResponseEntity.status(401).build();
         return ResponseEntity.ok(userEntityDtos);
+    }
+
+    @PostMapping("/login/addinfo")
+    public ResponseEntity<Object> addUserInfo(@RequestBody AddinfoRequsetDto requsetDto) {
+        System.out.println(requsetDto);
+        if (userService.addInfo(requsetDto)){
+            return ResponseEntity.status(200).body(null);
+        }
+        return ResponseEntity.status(503).body(null);
     }
 }

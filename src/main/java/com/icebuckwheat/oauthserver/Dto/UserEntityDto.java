@@ -42,9 +42,9 @@ public class UserEntityDto implements Serializable {
     @Schema(description = "사용자의 지병")
     String illness;
     @Schema(description = "사용자의 키")
-    Byte height;
+    int height;
     @Schema(description = "사용자의 몸무게")
-    Byte weight;
+    int weight;
     @Schema(description = "사용자의 권한")
     @NotNull
     String role;
