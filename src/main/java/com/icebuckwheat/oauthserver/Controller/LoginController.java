@@ -187,4 +187,16 @@ public class LoginController {
         }
         return ResponseEntity.status(503).body(null);
     }
+
+    @GetMapping("/login/broadcast")
+    public ResponseEntity<Object> start(String userid) {
+        userService.broadcastStart(userid);
+        return ResponseEntity.status(200).body(null);
+    }
+
+    @DeleteMapping("/login/broadcast")
+    public ResponseEntity<Object> stop(String userid) {
+        userService.broadcastEnd(userid);
+        return ResponseEntity.status(200).body(null);
+    }
 }

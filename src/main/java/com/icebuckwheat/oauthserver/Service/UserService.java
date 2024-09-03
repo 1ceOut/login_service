@@ -65,4 +65,18 @@ public class UserService {
         }
         return true;
     }
+
+    @Transactional
+    public void broadcastStart(String userid) {
+        UserEntity entity = userEntityRepository.findById(userid).get();
+        entity.setBroadcast(true);
+        userEntityRepository.save(entity);
+    }
+
+    @Transactional
+    public void broadcastEnd(String userid) {
+        UserEntity entity = userEntityRepository.findById(userid).get();
+        entity.setBroadcast(false);
+        userEntityRepository.save(entity);
+    }
 }

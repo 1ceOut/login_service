@@ -53,6 +53,9 @@ public class UserEntity {
     @Column(name = "refresh_token", length = 512)
     private String refreshToken;
 
+    @Column(name = "broadcast")
+    private Boolean broadcast;
+
 
     public UserEntityDto toDto() {
         return UserEntityDto.builder()
@@ -67,6 +70,7 @@ public class UserEntity {
                 .height(height)
                 .weight(weight)
                 .role(role)
+                .broadcast(broadcast)
                 .build();
     }
 }

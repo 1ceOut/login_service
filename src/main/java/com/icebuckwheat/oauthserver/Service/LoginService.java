@@ -71,6 +71,7 @@ public class LoginService {
             user.setRole("ROLE_NEED_INSERT");
             user.setAccessToken(kakaoAccessDto.getAccess_token());
             user.setRefreshToken(kakaoAccessDto.getRefresh_token());
+            user.setBroadcast(false);
             userEntityRepository.save(user);
         }
         else {
@@ -124,6 +125,7 @@ public class LoginService {
             user.setRole("ROLE_NEED_INSERT");
             user.setAccessToken(naverAccessDto.getAccess_token());
             user.setRefreshToken(naverAccessDto.getRefresh_token());
+            user.setBroadcast(false);
             userEntityRepository.save(user);
         }
         else {
@@ -170,6 +172,7 @@ public class LoginService {
             user.setRole("ROLE_NEED_INSERT");
             user.setAccessToken(googleAccessDto.getAccess_token());
             user.setRefreshToken(googleAccessDto.getRefresh_token());
+            user.setBroadcast(false);
             userEntityRepository.save(user);
         }
         else {

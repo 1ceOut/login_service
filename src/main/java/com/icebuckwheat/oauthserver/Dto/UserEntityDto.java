@@ -48,4 +48,6 @@ public class UserEntityDto implements Serializable {
     @Schema(description = "사용자의 권한")
     @NotNull
     String role;
+    Boolean broadcast;
+
 }
