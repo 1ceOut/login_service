@@ -112,8 +112,10 @@ public class LoginService {
         JsonNode jsonNode = objectMapper.readTree(naverUserOpenFeign.getUser("Bearer " + naverAccessDto.getAccess_token())).get("response");
 
         UserEntity user = null;
+        String buf = "naver " + jsonNode.get("id").toString().replace("\"","");
 
-        if (!userEntityRepository.existsById("naver "+jsonNode.get("id"))){
+        if (!userEntityRepository.existsById(buf)){
+            System.out.println("new user");
             user = new UserEntity();
             user.setUserId(("naver "+jsonNode.get("id")).replace("\"",""));
             user.setName(jsonNode.get("name").asText());
@@ -125,7 +127,7 @@ public class LoginService {
             userEntityRepository.save(user);
         }
         else {
-            user = userEntityRepository.findById("naver "+jsonNode.get("id")).get();
+            user = userEntityRepository.findById(buf).get();
             user.setUserId(("naver "+jsonNode.get("id")).replace("\"",""));
             user.setName(jsonNode.get("name").asText());
             user.setEmail(jsonNode.get("email").asText());
