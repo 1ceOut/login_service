@@ -60,6 +60,7 @@ public class LoginService {
         UserEntity user = null;
 
         KakaoAccessDto kakaoAccessDto = kakaoGetAccessToken(code);
+        System.out.println(kakaoAccessDto);
         JsonNode jsonNode = objectMapper.readTree(kakaoUesrOpenFeign.getUser("Bearer " + kakaoAccessDto.getAccess_token(),"application/x-www-form-urlencoded;charset=utf-8"));
 
         if (!userEntityRepository.existsById(provider+" "+jsonNode.get("id"))){
@@ -84,7 +85,9 @@ public class LoginService {
             userEntityRepository.save(user);
         }
 
+        System.out.println(user);
         userService.sendUserId(convert_User(user));
+        userService.sendUserData(user.toDto());
 
         return JwtResponse.builder()
                 .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
@@ -139,7 +142,9 @@ public class LoginService {
             userEntityRepository.save(user);
         }
 
+        System.out.println(user);
         userService.sendUserId(convert_User(user));
+        userService.sendUserData(user.toDto());
 
         return JwtResponse.builder()
                 .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
@@ -185,7 +190,9 @@ public class LoginService {
             userEntityRepository.save(user);
         }
 
+        System.out.println(user);
         userService.sendUserId(convert_User(user));
+        userService.sendUserData(user.toDto());
 
         return JwtResponse.builder()
                 .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
@@ -224,6 +231,7 @@ public class LoginService {
                 userEntityRepository.save(user);
 
                 userService.sendUserId(convert_User(user));
+                userService.sendUserData(user.toDto());
 
                 return JwtResponse.builder()
                         .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))
@@ -272,6 +280,7 @@ public class LoginService {
                 userEntityRepository.save(user);
 
                 userService.sendUserId(convert_User(user));
+                userService.sendUserData(user.toDto());
 
                 return JwtResponse.builder()
                         .AccessToken(jwt.MakeAccessJwtToken(user.getUserId(),user.getRole(),user.getName(),user.getPhoto()))

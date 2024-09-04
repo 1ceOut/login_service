@@ -21,17 +21,23 @@ public class UserService {
 
     private final ObjectMapper objectMapper;
     private final KafkaTemplate<String, User> kafkaTemplate;
+    private final KafkaTemplate<String, UserEntityDto> kafkaUserTemplate;
     private final UserEntityRepository userEntityRepository;
 
     @Autowired
-    public UserService(ObjectMapper objectMapper, KafkaTemplate<String, User> kafkaTemplate, UserEntityRepository userEntityRepository) {
+    public UserService(ObjectMapper objectMapper, KafkaTemplate<String, User> kafkaTemplate, KafkaTemplate<String, UserEntityDto> kafkaUserTemplate, UserEntityRepository userEntityRepository) {
         this.objectMapper = objectMapper;
         this.kafkaTemplate = kafkaTemplate;
+        this.kafkaUserTemplate = kafkaUserTemplate;
         this.userEntityRepository = userEntityRepository;
     }
 
     public void sendUserId(User user) {
         kafkaTemplate.send("user-topics", user);  // "user-topic"은 Kafka 토픽 이름
+    }
+
+    public void sendUserData(UserEntityDto userEntityDto) {
+        kafkaUserTemplate.send("community-topics", userEntityDto);
     }
 
     public GetUserDataResponseDto getUser(String userId) {
